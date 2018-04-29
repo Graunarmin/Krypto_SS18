@@ -23,10 +23,15 @@ def checkHash(hash_codes, wordlength):
     die dann mit sha-1 in hashes umrechnen und mit all den zu knackenden aus der
     oben erstellten Liste abgleichen. Bei Treffer in dictionary "result" ablegen"""
 
+    """Vorgehen fürs Dictionary: Es gibt 26^Wortlänge mögliche Buchstabombinationen der Länge "Wortlänge".
+    i wird hochgezählt bis dahin und alle Zahlen zwischen 0 und da werden umgerechnet
+    wie auch in binär oder hexa umgerechnet wird, aber halt mit Basis 26 und statt Zahlen
+    holt man sich den entsprechenden Buchstaben (an Position i) aus der Alphabet Liste."""
+
     alphabet = ["a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"]
     results = {}
 
-    for i in range (0, (26** wordlength)-1):
+    for i in range (0, (len(alphabet)** wordlength)-1):
         word = convert(i, wordlength, alphabet)
         print(i, " = ",word)
         for hash in hash_codes:
@@ -34,6 +39,7 @@ def checkHash(hash_codes, wordlength):
                 results[hash] = word
                 print("The password from ", hash, "is: ", word)
                 break
+
         if len(results) == len(hash_codes):
             print("\nHere are the results as 'hash': 'password'\n")
             pprint(results)
@@ -44,17 +50,15 @@ def checkHash(hash_codes, wordlength):
         pprint(results)
         for code in hash_codes:
             if code not in results.keys():
-                print("But ", code, " could not be resolved!\n")
+                print("But ", code, " could not be resolved.\n")
 
     elif len(results) == 0:
         print("Failed completely!")
 
 
 def convert(number, n, alphabet):
-    # number to convert
-    # n = number of digets
+    """ number = number to convert, n = number of digets"""
     m = len(alphabet)
-
     word = ""
 
     while n > 0:
