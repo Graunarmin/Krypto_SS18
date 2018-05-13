@@ -290,18 +290,22 @@ def main() -> None:
         '''
         Test all possible keys with the second known pair (p_2, c_2)
         '''
+        # k_2 = bin(possible_keys[k_1])
+        # k_1 = bin(k_1)
+        # k_2 = k_2.replace('0b','')
+
+        # k = k_1 + k_2
+        # key = int(k,2)
+
         k_2 = possible_keys[k_1]
 
-        k = str(k_1)+str(k_2)
-        key = int(k)
-
-        print("Testing key ",key,"\n")
+        print("Testing key 1 ",k_1," und key 2", k_2)
         print("Plaintext: ",p_2)
         print("Ciphertext: ",c_2)
 
-        encrypt = cipher.encrypt(key, p_2)
+        encrypt = cipher.encrypt(k_2, cipher.encrypt(k_1, p_2))
 
-        print("Encrypted text from k %s and p %s: %s" %(key, p_2, encrypt))
+        print("Encrypted text from p %s: %s" %(p_2, encrypt))
 
         if encrypt == c_2:
             print("The Key is: ", key_1,", ",key_2)
