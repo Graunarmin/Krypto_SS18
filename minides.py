@@ -193,31 +193,31 @@ class MiniDES:
 
         return self._to_state(left, right)
 
-def find_key(p_1,c_1,p_2,c_2):
-    
+def find_key(p_1, c_1, p_2, c_2):
+    """
+    to find the keys (K1,K2) for two given pairs of
+    (plaintext, ciphertext)
+    """
+
     cipher = MiniDES()
-    
     table = {}
     possible_keys = {}
-    
     found = False
 
-    keylength = 16
-    
-    for i in range(0, 2**keylength):
+    for i in range(0, 2**16):
         '''
-        create dictionary with "key:encrypt(p_1)"
+        create dictionary "key:encrypt(p_1)"
         zuerst p_1 mit allen mögl. keys verschlüsseln (= value_1)
         und Paare speichern
         '''
 
-        key_1 = i 
+        key_1 = i
         print(key_1)
         table[key_1] = cipher.encrypt(key_1, p_1)
 
     '''
     Dann c_1 mit allen möglichen Keys entschlüsseln (= value_2)
-    '''    
+    '''
 
     print("checking for matches ..\n")
     for key_2 in table:
@@ -225,8 +225,8 @@ def find_key(p_1,c_1,p_2,c_2):
         value_2 = cipher.decrypt(key_2, c_1)
 
         '''
-        wenn value_1 == irgendein value_2: den key, mit dem v_1 
-        erzeugt wurde und den, mit dem v_2 erzeugt wurde 
+        wenn value_1 == irgendein value_2: den key, mit dem v_1
+        erzeugt wurde und den, mit dem v_2 erzeugt wurde
         gemeinsam als Schlüsselkandidaten abspeichern
         '''
         for k_1 in table:
@@ -242,9 +242,9 @@ def find_key(p_1,c_1,p_2,c_2):
 
         k_2 = possible_keys[k_1]
 
-        print("Testing key 1 ",hex(k_1)," und key 2", hex(k_2))
-        print("Plaintext: ",hex(p_2))
-        print("Ciphertext: ",hex(c_2))
+        print("Testing key 1 ", hex(k_1), " und key 2", hex(k_2))
+        print("Plaintext: ", hex(p_2))
+        print("Ciphertext: ", hex(c_2))
 
         encrypt = cipher.encrypt(k_2, cipher.encrypt(k_1, p_2))
 
@@ -254,10 +254,9 @@ def find_key(p_1,c_1,p_2,c_2):
             print("The keys are %s and %s" %(hex(k_1), hex(k_2)))
             found = True
             break
-    
-    if found == False:
+
+    if not found:
         print("Key was not found.")
-        
 
 # ----------------------------------------------------------
 
@@ -288,7 +287,7 @@ def main() -> None:
     p_2 = 0x11223344
     c_2 = 0x31f0989e
 
-    find_key(p_1,c_1,p_2,c_2)
+    find_key(p_1, c_1, p_2, c_2)
 
 # ----------------------------------------------------------
 
