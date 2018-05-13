@@ -193,61 +193,10 @@ class MiniDES:
 
         return self._to_state(left, right)
 
-def to_hex(number):
-    '''
-    dachte, die hilft vielleicht dabei, die Schlüssel richtig in der Form
-    0x11223344 (z.B) darzustellen, so dass es trotzdem als int erkannt wird,
-    klappt aber nicht so richtig.
-    '''
-        
-    key = ""
-    length = 4
-
-    base = ['0', '1', '2', '3', '4', '5', '6', '7', 
-            '8', '9', 'a', 'b', 'c', 'd', 'e', 'f']
+def find_key(p_1,c_1,p_2,c_2):
     
-    while length > 0:
-        i = number % 16
-        key += base[i]
-        number //= 16
-        length -= 1
-    
-    return key[::-1]
-        
-
-# ----------------------------------------------------------
-
-def main() -> None:
-    """
-    Tests MiniDES.
-    """
     cipher = MiniDES()
-    plaintext = 0x11223344
-    key = 0x01234567
-    ciphertext = cipher.encrypt(key, plaintext)
-    expected_ciphertext = 0xcae11b78
-
-    second_plaintext = cipher.decrypt(key, ciphertext)
-    assert ciphertext == expected_ciphertext
-    assert plaintext == second_plaintext
-
-    print("K:  {:08x}".format(key))
-    print("P:  {:08x}".format(plaintext))
-    print("C:  {:08x}".format(ciphertext))
-    print("P': {:08x}".format(second_plaintext))
-
-    #--------------- unser Teil!--------------------------------------------
     
-    # läuft zwar durch, findet aber keinen Schlüssel -.-
-    # denke das liegt daran, dass die keys momentan als ganz normale ints 
-    # übergeben werden und nicht in der Form 0xabcdef01. Bekomme das nicht hin.
-
-    p_1 = 0xabcdef01
-    c_1 = 0xd18c096d
-
-    p_2 = 0x11223344
-    c_2 = 0x31f0989e
-
     table = {}
     possible_keys = {}
     
@@ -262,7 +211,7 @@ def main() -> None:
         und Paare speichern
         '''
 
-        key_1 = i #so wird der Schlüssel als "ganz normaler" int übergeben
+        key_1 = i 
         print(key_1)
         table[key_1] = cipher.encrypt(key_1, p_1)
 
@@ -290,30 +239,56 @@ def main() -> None:
         '''
         Test all possible keys with the second known pair (p_2, c_2)
         '''
-        # k_2 = bin(possible_keys[k_1])
-        # k_1 = bin(k_1)
-        # k_2 = k_2.replace('0b','')
-
-        # k = k_1 + k_2
-        # key = int(k,2)
 
         k_2 = possible_keys[k_1]
 
-        print("Testing key 1 ",k_1," und key 2", k_2)
-        print("Plaintext: ",p_2)
-        print("Ciphertext: ",c_2)
+        print("Testing key 1 ",hex(k_1)," und key 2", hex(k_2))
+        print("Plaintext: ",hex(p_2))
+        print("Ciphertext: ",hex(c_2))
 
         encrypt = cipher.encrypt(k_2, cipher.encrypt(k_1, p_2))
 
-        print("Encrypted text from p %s: %s" %(p_2, encrypt))
+        print("Encrypted text from p %s: %s" %(hex(p_2), hex(encrypt)))
 
         if encrypt == c_2:
-            print("The Key is: ", key_1,", ",key_2)
+            print("The keys are %s and %s" %(hex(k_1), hex(k_2)))
             found = True
             break
     
     if found == False:
         print("Key was not found.")
+        
+
+# ----------------------------------------------------------
+
+def main() -> None:
+    """
+    Tests MiniDES.
+    """
+    # cipher = MiniDES()
+    # plaintext = 0x11223344
+    # key = 0x01234567
+    # ciphertext = cipher.encrypt(key, plaintext)
+    # expected_ciphertext = 0xcae11b78
+
+    # second_plaintext = cipher.decrypt(key, ciphertext)
+    # assert ciphertext == expected_ciphertext
+    # assert plaintext == second_plaintext
+
+    # print("K:  {:08x}".format(key))
+    # print("P:  {:08x}".format(plaintext))
+    # print("C:  {:08x}".format(ciphertext))
+    # print("P': {:08x}".format(second_plaintext))
+
+    #--------------- Aufgabe 2--------------------------------------------
+
+    p_1 = 0xabcdef01
+    c_1 = 0xd18c096d
+
+    p_2 = 0x11223344
+    c_2 = 0x31f0989e
+
+    find_key(p_1,c_1,p_2,c_2)
 
 # ----------------------------------------------------------
 
