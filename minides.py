@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Lemuth (117017) & Sacher (117353)
 
 """
 Defines a 32-bit minified variant of the DES.
@@ -193,6 +194,8 @@ class MiniDES:
 
         return self._to_state(left, right)
 
+#------Aufgabe 2----------------------------------------------------------
+
 def find_key(p_1, c_1, p_2, c_2):
     """
     to find the keys (K1,K2) for two given pairs of
@@ -242,13 +245,13 @@ def find_key(p_1, c_1, p_2, c_2):
 
         k_2 = possible_keys[k_1]
 
-        print("Testing key 1 ", hex(k_1), " und key 2", hex(k_2))
-        print("Plaintext: ", hex(p_2))
-        print("Ciphertext: ", hex(c_2))
+        print("Testing key1", hex(k_1), "and key2", hex(k_2), "...\n")
+        print("Plaintext was:", hex(p_2))
+        print("Expected ciphertext is:", hex(c_2))
 
         encrypt = cipher.encrypt(k_2, cipher.encrypt(k_1, p_2))
 
-        print("Encrypted text from p %s: %s" %(hex(p_2), hex(encrypt)))
+        print("Encrypted text is: %s" %hex(encrypt))
 
         if encrypt == c_2:
             print("The keys are %s and %s" %(hex(k_1), hex(k_2)))
