@@ -262,16 +262,8 @@ def main() -> None:
         und Paare speichern
         '''
 
-        # Problem: die en- und decrypt Fkt brauchen int als input,
-        # aber ich bekomme es nicht hin, dass die Schlüssel als hex 
-        # dargestellt werden aber als ints erkannt werden, so wie Eik 
-        # das oben in zeile 220 z.B. macht.
-
-        # key_1 = "0x"+to_hex(i))
         key_1 = i #so wird der Schlüssel als "ganz normaler" int übergeben
         print(key_1)
-        # print (type(key_1))
-        # print(type(p_1))
         table[key_1] = cipher.encrypt(key_1, p_1)
 
     '''
@@ -303,7 +295,15 @@ def main() -> None:
         k = str(k_1)+str(k_2)
         key = int(k)
 
-        if cipher.encrypt(key, p_2) == c_2:
+        print("Testing key ",key,"\n")
+        print("Plaintext: ",p_2)
+        print("Ciphertext: ",c_2)
+
+        encrypt = cipher.encrypt(key, p_2)
+
+        print("Encrypted text from k %s and p %s: %s" %(key, p_2, encrypt))
+
+        if encrypt == c_2:
             print("The Key is: ", key_1,", ",key_2)
             found = True
             break
