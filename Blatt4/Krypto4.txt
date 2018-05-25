@@ -1,4 +1,5 @@
-gleicher Schlüssel
+4.1
+Immer gleicher Schlüssel!
 
 ShiftRows
 Cipher: [155, 29, 114, 12, 137, 10, 132, 215, 115, 119, 66, 78, 246, 101, 191, 13] (Plain: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15])
