@@ -4,7 +4,6 @@
     bzw       python3 ddt.py "sbox4.txt" für Nr. 4 a) '''
 
 import sys
-#from pprint import pprint
 
 def read_file(filename):
     '''
@@ -15,12 +14,10 @@ def read_file(filename):
     with open(filename, "r") as file:
         for line in file:
             box = (line.strip()).split(",")
-
             for x_i in box:
                 sbox.append(int(x_i))
 
     print("SBOX:", sbox, "\n")
-
     create_ddt(sbox)
 
 
@@ -31,7 +28,6 @@ def create_ddt(sbox):
 
     size = len(sbox)
     values = [y for y in range(size)]
-
     ddt_s = [[0 for x in range(size)] for y in range(size)]
 
     for d_in in values:
