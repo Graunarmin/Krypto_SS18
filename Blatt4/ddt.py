@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
-'''Need the string statements to explain, leave me alone, pylint -.-'''
-
-import sys
-#from pprint import pprint
 
 ''' Terminal: python3 ddt.py "sbox.txt"
     bzw       python3 ddt.py "sbox4.txt" für Nr. 4 a) '''
+
+import sys
+#from pprint import pprint
 
 def read_file(filename):
     '''
@@ -20,9 +19,8 @@ def read_file(filename):
             for x_i in box:
                 sbox.append(int(x_i))
 
-    print("SBOX:")
-    print(sbox)
-    print("\n")
+    print("SBOX:", sbox, "\n")
+
     create_ddt(sbox)
 
 
@@ -48,11 +46,11 @@ def create_ddt(sbox):
 def print_ddt(ddt, size):
     '''
     print the ddt so it is readable
+    add delta_in in first row and delta_out in first column and fill with leading zeros
     '''
 
     output = [[0 for x in range(size+1)] for y in range(size+1)] # w x h
 
-    '''add delta_in in first row and delta_out in first column and fill with leading zeros'''
     for w_i in range(0, size + 1):
         for h_i in range(0, size + 1):
             if w_i == 0 and h_i == 0:
