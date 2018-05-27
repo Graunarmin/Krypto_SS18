@@ -20,7 +20,8 @@ class MiniPresent:
     A 16-bit simplified variant of PRESENT.
     """
 
-    NUM_ROUNDS = 16
+    #NUM_ROUNDS = 16
+    NUM_ROUNDS = 1
     NUM_STATE_BITS = 16
     NUM_KEY_BITS = 16
     NUM_SBOX_BITS = 4
@@ -173,11 +174,14 @@ class MiniPresent:
         :return: 32-bit integer ciphertext
         """
         key = key & MiniPresent.WORD_MASK
-
+        #print("before:", hex(state))
         for i in range(MiniPresent.NUM_ROUNDS):
+            #runde = i+1
             state = self._encrypt_round(i+1, key, state)
+            #print("after round %s" %runde, "x_%s:" %runde, hex(state))
 
         state ^= key
+        #print("final:", hex(state))
         return state
 
     # ----------------------------------------------------------
@@ -207,21 +211,31 @@ def main() -> None:
     """
     cipher = MiniPresent()
     plaintext = 0x1122
+    plaintext_2 = 0x4486
     key = 0x4567
     ciphertext = cipher.encrypt(key, plaintext)
+    ciphertext_2 = cipher.encrypt(key, plaintext_2)
     expected_ciphertext = 0x904b
 
-    second_plaintext = cipher.decrypt(key, ciphertext)
-    print("{:04x}".format(ciphertext))
-    print("{:04x}".format(second_plaintext))
+    delta_in = plaintext ^ plaintext_2
+    delta_out = ciphertext ^ ciphertext_2
 
-    assert ciphertext == expected_ciphertext
-    assert plaintext == second_plaintext
+
+    # second_plaintext = cipher.decrypt(key, ciphertext)
+    # print("{:04x}".format(ciphertext))
+    # print("{:04x}".format(second_plaintext))
+
+    # assert ciphertext == expected_ciphertext
+    # assert plaintext == second_plaintext
 
     print("K:  {:04x}".format(key))
     print("P:  {:04x}".format(plaintext))
     print("C:  {:04x}".format(ciphertext))
-    print("P': {:04x}".format(second_plaintext))
+    print("P2:  {:04x}".format(plaintext_2))
+    print("C2:  {:04x}".format(ciphertext_2))
+    print("D_in:  {:04x}".format(delta_in))
+    print("D_out:  {:04x}".format(delta_out))
+    #print("P': {:04x}".format(second_plaintext))
 
 
 # ----------------------------------------------------------
