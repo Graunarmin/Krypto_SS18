@@ -53,7 +53,7 @@ def ordnung(a, p, e):
 
 def generator(n):
     '''
-    Generatoren der Gruppe Z_n bestimmen - 
+    Generatoren der Gruppe Z_n bestimmen \n
     wenn in mod n {a, a^2, a^3, ..., a^n} = Z_n, dann ist a Generator von Z_n
     '''
 
@@ -79,7 +79,7 @@ def generator(n):
 
 def order_of_gi(g, i, p, e):
     '''
-    Ordnung von g^i in Z_p mit neutralem Element e
+    Ordnung von g^i in Z_p mit neutralem Element e \n
     ord(g^i) = (ord(g))/ ggT((ord(g)), i)
     '''
 
@@ -89,8 +89,6 @@ def order_of_gi(g, i, p, e):
     return ord_gi
 
 
-
-
 def aver_ord(g, n, e):
     '''
     average order of elements is the sum of orders of the groups elements divided by the order of the group \n
@@ -98,19 +96,14 @@ def aver_ord(g, n, e):
     g = Generator von Z_n                                                                                   \n
     n = Primzahl p                                                                                          \n
     e = neutrales Element                                                                                   \n
-    a,b = zufällige Elemente aus Z_n
+    a,b = zufällige Elemente aus Z_n                                                                        \n
+    (takes some time! About 20-25 minutes?)
     '''
     sum_ = 0
-    counter = 0
-
     for a in range (1, n):
-        counter += 1
         for b in range(1, n):
-            counter +=1
+            counter += 1
             sum_ += order_of_gi(g, (a*b), n, e)
-            #print(sum_)
-    print("Counter:") 
-    print(counter)
     
     average_order = sum_ / ((n-1)*(n-1))
     return average_order
