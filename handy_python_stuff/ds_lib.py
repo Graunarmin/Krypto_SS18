@@ -20,19 +20,19 @@ def ggT(s,e):
     ggT von s und e mit dem euklidschen Algorithmus bestimmen
     '''
     tmp = 0
-	if s < e:
-		tmp = e
-		e = s
-		s = tmp
+    if s < e:
+        tmp = e
+        e = s
+        s = tmp
 
-	while True:
-		r = s % e
-		if r == 0:
-			break
-		s = e
-		e = r
-	#print (e)
-	return e
+    while True:
+        r = s % e
+        if r == 0:
+            break
+        s = e
+        e = r
+    #print (e)
+    return e
 
 
 def mult_inv(x, Z_n):
@@ -46,3 +46,34 @@ def mult_inv(x, Z_n):
                 return i
     else:
         return(-1)
+
+
+def generator(n):
+    '''
+    Generatoren der Gruppe Z_n bestimmen - 
+    wenn in mod n {a, a^2, a^3, ..., a^n} = Z_n, dann ist a Generator von Z_n
+    '''
+
+    Z_n = [i for i in range(1,n)]
+    A = []
+    generators = []
+
+    for a in range(0, n):
+        for z in Z_n:
+            x = (a**z) % n
+            if not A or x not in A:
+                A.append(x)
+        A.sort()
+        
+        if A == Z_n:
+            generators.append(a)
+        A = []
+
+    # print("Generatoren:")
+    # print(generators)
+    return generators
+
+
+    
+        
+    
