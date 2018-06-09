@@ -1,5 +1,6 @@
 '''
-Sammlung von nützlichen Funktionen; einfach in der Python shell "import ds_lib" eingeben und Funktionen benutzen :)
+Sammlung von nützlichen Funktionen
+import my_lib
 '''
 
 def ggT(s,e):
@@ -32,6 +33,7 @@ def mult_inv(x, Z_n):
                 #print(i)
                 return i
     else:
+        print("Es existiert kein multiplikatives Inverses zu %s in Z_%s." %(x, Z_n))
         return(-1)
 
 
@@ -49,8 +51,6 @@ def ordnung(a, p, e):
     return(-1)
 
 
-
-
 def generator(n):
     '''
     Generatoren der Gruppe Z_n bestimmen \n
@@ -64,18 +64,21 @@ def generator(n):
     for a in range(0, n):
         for z in Z_n:
             x = (a**z) % n
-            if not A or x not in A:
+            if x not in A:
                 A.append(x)
+
         A.sort()
         
         if A == Z_n:
             generators.append(a)
+
         A = []
     
     if generators:
-        print("Z_%s ist zyklisch und hat folgende(n) Generator(en):")
+        print("Z_%s ist zyklisch und hat folgende(n) Generator(en):" %n)
         # print(generators)
     return generators
+
 
 def order_of_gi(g, i, p, e):
     '''
