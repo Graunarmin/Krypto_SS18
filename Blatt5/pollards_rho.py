@@ -1,18 +1,21 @@
+# Valerie Lemuth (117017) & Johanna Sacher (117353)
 '''
-Berechnen des diskreten Logaritmus von y zur Basis g in Z_p, d.h. es gilt y = g^x (mod p)\n
+Berechnen des diskreten Logaritmus von y zur Basis g in Z_p, d.h. es gilt y = g^x (mod p)
+(Variablenbenennung pylintkonform ist ein bisschen unübersichtlich, sorry dafür
+)
 Terminal: python3 pollards_rho.py p g y
     e.g.: python3 pollards_rho.py 1019 2 5
           python3 pollards_rho.py 1018 2 5
 
-with help from https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm_for_logarithms \n
+with help from https://en.wikipedia.org/wiki/Pollard%27s_rho_algorithm_for_logarithms
 and http://cacr.uwaterloo.ca/hac/about/chap3.pdf and https://gist.github.com/brunoro/5894145
 '''
 import sys
 import my_lib
 
-X_DICT = {0: 1}
-A_DICT = {0: 0}
-B_DICT = {0: 0}
+X_DICT = {0:1}
+A_DICT = {0:0}
+B_DICT = {0:0}
 
 def get_xab(i, _g, _y, _p):
     '''get x_i, a_i and b_i'''
@@ -53,8 +56,8 @@ def pollards_rho(_p, _g, _y):
 
     #print("i\tx_i\ta_i\tb_i\tx_2i\ta_2i\tb_2i")
     for i in range(1, _p):
-        x_i, a_i, b_i = get_xab(i, _g, _y, _p)
-        x_2i, a_2i, b_2i = get_xab(2*i, _g, _y, _p)
+        x_i, a_i, b_i = get_xab(i, _g, _y, _p) #Schildkröte
+        x_2i, a_2i, b_2i = get_xab(2*i, _g, _y, _p) #Hase
 
         #print ("%d\t%d\t%d\t%d\t%d\t%d\t%d" % (i, x_i, a_i, b_i, x_2i, a_2i, b_2i))
         if x_i == x_2i:
