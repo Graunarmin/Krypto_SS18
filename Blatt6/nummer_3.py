@@ -25,18 +25,27 @@ def get_key():
 # a) CTR Mode:
     # Ek(IV) XOR M_1 = C_1
     # Ek(IV) = M_1 XOR C_1
+    # -> behalten IV, darf ja mehrmals vorkommen:
     # Ek(IV) XOR m_1 = c_1
     # M_1 XOR C_1 XOR m_1 = c_1
 
     c_1 = M_1 ^ C_1 ^ m_1 
     print("c_1 = {:04x}".format(c_1))
 
-    # da m_2 == M_2 und wir IV unverändert lasse, ist c_2 == C_2
+    # da m_2 == M_2 und wir IV unverändert lassen, ist c_2 == C_2
     # IV = 0xdabe785fb5a688a61cc77c3035d754fa
     # c1 = 0x5973ecca8de35f99172bd28ba0ede12b
     # c2 = 0x42f2dc27a8a676d69e1825d323016d38
 
+
 # b) CBC Mode:
+    # C1 = Ek(IV XOR M1)
+    # C2 = Ek(C1 XOR M2)
+    # M = (m1, M2)
+    # hier muss iv geändert werden:
+    # c1 = Ek(iv XOR m1)
+    # c2 = Ek(c1 XOR M2)
+
 
 
 
