@@ -11,9 +11,6 @@ __copyright__ = Creative Commons CC0
 
 from Crypto.Cipher import AES
 from Crypto.Util.py3compat import bchr
-#from Crypto import Random
-#import binascii
-
 
 # ---------------------------------------------------------
 
@@ -42,38 +39,11 @@ class CBCPaddingOracle:
         always at least the length of the message.
         """
 
-        BLOCK_LENGTH = 16
-
-        padded_msg = self.pad(message, BLOCK_LENGTH)
+        block_length = 16
+        padded_msg = pad(message, block_length)
         enc_msg = self.aes_enc(initial_value, padded_msg)
 
         return enc_msg
-
-
-    def pad(self, message: bytes, BLOCK_LENGTH: int): #-> bytes
-        '''
-        pads the message to a length that is a multiple of 16
-        '''
-
-        too_short = ((len(message) % BLOCK_LENGTH) != 0)
-
-        if not too_short:
-            # Wenn der letzte Block "voll" ist: noch einen Block anhängen (16 x die 16)
-            for i in range(0, 16):
-                padding = bchr(16)
-                message += padding
-
-        else:
-            # wenn dem letzten Block Bytes fehlen: die entsprechende Anzahl hinzufügen
-            to_add = (BLOCK_LENGTH - len(message)) % BLOCK_LENGTH
-
-            while too_short:
-                padding = bchr(to_add)
-                message += padding
-                if (len(message) % BLOCK_LENGTH) == 0:
-                    too_short = False
-
-        return message
 
 
     def aes_enc(self, initial_value: bytes, message: bytes): #-> bytes
@@ -93,16 +63,16 @@ class CBCPaddingOracle:
         Given a ciphertext, evaluates if the padding is correct.
         :param initial_value: 16-byte initial value.
         :param ciphertext: Ciphertext. Length must be multiple of 16 bytes.
-        :return: True if padding is correct or there was no padding, and False otherwise 
+        :return: True if padding is correct or there was no padding, and False otherwise
         AND the decrypted message (for now)
         """
 
         dec_msg = self.aes_dec(initial_value, ciphertext)
-        BLOCK_LENGTH = len(initial_value)
+        block_length = len(initial_value)
         pad_val = dec_msg[-1]
         padding_correct = False
 
-        if pad_val > BLOCK_LENGTH:
+        if pad_val > block_length:
             print("Input is not padded or padding is wrong")
 
         else:
@@ -111,11 +81,11 @@ class CBCPaddingOracle:
                     padding_correct = True
                 else:
                     padding_correct = False
-                    break;
+                    break
 
-            if padding_correct == False:
+            if not padding_correct:
                 print("Input is not padded or padding is wrong")
- 
+
         return padding_correct, dec_msg
 
 
@@ -128,9 +98,37 @@ class CBCPaddingOracle:
         dec_msg = msg.decrypt(ciphertext)
 
         return dec_msg
-  
+
         #remove padding from ciphertext (not really necassary though^^)
         # l = len(ciphertext) - pad_val
         # without_padding = ciphertext[:l]
-    
         # return dec_msg, without_padding
+
+#---------------------------- a) ----------------------------
+
+def pad(message: bytes, block_length: int): #-> bytes
+    '''
+    pads the message to a length that is a multiple of 16
+    '''
+
+    too_short = ((len(message) % block_length) != 0)
+
+    if not too_short:
+        # Wenn der letzte Block "voll" ist: noch einen Block anhängen (16 x die 16)
+        i = 0
+        while i < 16:
+            padding = bchr(16)
+            message += padding
+            i += 1
+
+    else:
+        # wenn dem letzten Block Bytes fehlen: die entsprechende Anzahl hinzufügen
+        to_add = (block_length - len(message)) % block_length
+
+        while too_short:
+            padding = bchr(to_add)
+            message += padding
+            if (len(message) % block_length) == 0:
+                too_short = False
+
+    return message
