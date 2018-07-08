@@ -70,22 +70,26 @@ class CBCPaddingOracle:
         dec_msg = self.aes_dec(initial_value, ciphertext)
         block_length = len(initial_value)
         pad_val = dec_msg[-1]
-        padding_correct = False
+        padding_correct = True
 
         if pad_val > block_length:
-            print("Input is not padded or padding is wrong")
+            padding_correct = False
 
-        else:
-            for i in range(1, pad_val+1):
-                if dec_msg[-i] == pad_val:
-                    padding_correct = True
-                else:
+        elif pad_val == block_length:
+            #hier müsste 16 x 16 stehen
+            for i in range(0, block_length):
+                if dec_msg[i] != pad_val:
                     padding_correct = False
                     break
 
-            if not padding_correct:
-                print("Input is not padded or padding is wrong")
-
+        elif pad_val < block_length:
+            for i in range(1, pad_val+1):
+                if dec_msg[-i] != pad_val:
+                    padding_correct = False
+                    break
+        else:
+            pass
+                
         return padding_correct, dec_msg
 
 
@@ -98,11 +102,6 @@ class CBCPaddingOracle:
         dec_msg = msg.decrypt(ciphertext)
 
         return dec_msg
-
-        #remove padding from ciphertext (not really necassary though^^)
-        # l = len(ciphertext) - pad_val
-        # without_padding = ciphertext[:l]
-        # return dec_msg, without_padding
 
 #---------------------------- a) ----------------------------
 

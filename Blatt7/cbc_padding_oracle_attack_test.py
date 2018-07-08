@@ -51,7 +51,7 @@ class CBCPaddingOracleAttackTest(unittest.TestCase):
         self.initial_value = to_bytes("3031323334353637383940414243446a")
         self.key = to_bytes("000102030405060708090a0b0c0d0e0f")
         self.oracle = CBCPaddingOracle(self.key)
-        #self.attack = CBCPaddingOracleAttack()
+        self.attack = CBCPaddingOracleAttack()
 
     # ---------------------------------------------------------
 
@@ -67,31 +67,37 @@ class CBCPaddingOracleAttackTest(unittest.TestCase):
 
     # ---------------------------------------------------------
 
-    # def _test_cbc_attack(self, message: str) -> None:
-    #     message = to_bytes(message)
-    #     ciphertext = self.oracle.encrypt(self.initial_value, message)
+    def _test_cbc_attack(self, message: str) -> None:
+        message = to_bytes(message)
+        ciphertext = self.oracle.encrypt(self.initial_value, message)
 
-    #     recovered_message = self.attack.recover_message(self.oracle,
-    #                                                     self.initial_value,
-    #                                                     ciphertext)
-    #     self.assertEqual(message, recovered_message)
+        recovered_message = self.attack.recover_message(self.oracle,
+                                                        self.initial_value,
+                                                        ciphertext)
+        self.assertEqual(message, recovered_message)
 
-    # # ---------------------------------------------------------
+    # ---------------------------------------------------------
 
     # def test_cbc_attack_empty_message(self) -> None:
     #     self._test_cbc_attack("")
 
-    # # ---------------------------------------------------------
+    # ---------------------------------------------------------
 
-    # def test_cbc_attack_small_message(self) -> None:
-    #     self._test_cbc_attack("466f6f")
-
-    # # ---------------------------------------------------------
-
-    # def test_cbc_attack_single_block(self) -> None:
-    #     self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf0822")
+    def test_cbc_attack_small_message(self) -> None:
+        self._test_cbc_attack("466f6f")
 
     # # ---------------------------------------------------------
+
+    def test_cbc_attack_single_block(self) -> None:
+        self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf0822")
+
+    # ---------------------------------------------------------
+
+    def test_cbc_attack_padded_single_block(self) -> None:
+        self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf08")
+
+    # # ---------------------------------------------------------
+
 
     # def test_cbc_attack_two_blocks(self) -> None:
     #     self._test_cbc_attack(\
