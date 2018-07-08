@@ -29,7 +29,7 @@ class CBCPaddingOracle:
         """
         self.key = key
 
-    # ---------------------------------------------------------
+    # ---------------------------- a) -----------------------------
 
     def encrypt(self, initial_value: bytes, message: bytes): # -> bytes:
         """
@@ -42,46 +42,67 @@ class CBCPaddingOracle:
         always at least the length of the message.
         """
 
-        block_length = 16
-        padding_necessary = ((len(message) % block_length) != 0)
-        a_mess = message
+        BLOCK_LENGTH = 16
 
-        # if necessary: pad message so its length is a multiple of (or equal to) blocklength
-        if padding_necessary:
-            to_add = (block_length - len(message)) % block_length
-
-            while padding_necessary:
-                padding = bchr(to_add)
-                a_mess += padding
-                if (len(a_mess) % block_length) == 0:
-                    padding_necessary = False
-        print("Padded Message: ", a_mess)
-
-        # AES encrypt
-        cipher = AES.new(self.key, AES.MODE_CBC, initial_value)
-        enc_msg = cipher.encrypt(a_mess)
+        padded_msg = self.pad(message, BLOCK_LENGTH)
+        enc_msg = self.aes_enc(initial_value, padded_msg)
 
         return enc_msg
 
-    # ---------------------------------------------------------
+
+    def pad(self, message: bytes, BLOCK_LENGTH: int): #-> bytes
+        '''
+        pads the message to a length that is a multiple of 16
+        '''
+
+        too_short = ((len(message) % BLOCK_LENGTH) != 0)
+
+        if not too_short:
+            # Wenn der letzte Block "voll" ist: noch einen Block anhängen (16 x die 16)
+            for i in range(0, 16):
+                padding = bchr(16)
+                message += padding
+
+        else:
+            # wenn dem letzten Block Bytes fehlen: die entsprechende Anzahl hinzufügen
+            to_add = (BLOCK_LENGTH - len(message)) % BLOCK_LENGTH
+
+            while too_short:
+                padding = bchr(to_add)
+                message += padding
+                if (len(message) % BLOCK_LENGTH) == 0:
+                    too_short = False
+
+        return message
+
+
+    def aes_enc(self, initial_value: bytes, message: bytes): #-> bytes
+        '''
+        AES Encryption of a given message with a given IV
+        '''
+
+        cipher = AES.new(self.key, AES.MODE_CBC, initial_value)
+        enc_msg = cipher.encrypt(message)
+
+        return enc_msg
+
+    #-------------------------------- b) -----------------------------------
 
     def verify_padding(self, initial_value: bytes, ciphertext: bytes): # -> bool:
         """
         Given a ciphertext, evaluates if the padding is correct.
         :param initial_value: 16-byte initial value.
         :param ciphertext: Ciphertext. Length must be multiple of 16 bytes.
-        :return: True if padding is correct or there was no padding, and False otherwise.
+        :return: True if padding is correct or there was no padding, and False otherwise 
+        AND the decrypted message (for now)
         """
-        
-        msg = AES.new(self.key, AES.MODE_CBC, initial_value)
-        dec_msg = msg.decrypt(ciphertext)
 
-        block_length = len(initial_value)
+        dec_msg = self.aes_dec(initial_value, ciphertext)
+        BLOCK_LENGTH = len(initial_value)
         pad_val = dec_msg[-1]
-
         padding_correct = False
 
-        if pad_val > block_length:
+        if pad_val > BLOCK_LENGTH:
             print("Input is not padded or padding is wrong")
 
         else:
@@ -93,11 +114,21 @@ class CBCPaddingOracle:
                     break;
 
             if padding_correct == False:
-                # raise ValueError("Input is not padded or padding is wrong")
                 print("Input is not padded or padding is wrong")
-        
-        return padding_correct
-        
+ 
+        return padding_correct, dec_msg
+
+
+    def aes_dec(self, initial_value: bytes, ciphertext: bytes): #->bytes
+        '''
+        AES Decryption of a given ciphertext with a given IV
+        '''
+
+        msg = AES.new(self.key, AES.MODE_CBC, initial_value)
+        dec_msg = msg.decrypt(ciphertext)
+
+        return dec_msg
+  
         #remove padding from ciphertext (not really necassary though^^)
         # l = len(ciphertext) - pad_val
         # without_padding = ciphertext[:l]
