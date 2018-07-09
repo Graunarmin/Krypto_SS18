@@ -1,3 +1,5 @@
+Zum Testen im Terminal:
+
 import cbc_padding_oracle as oracle
 
 # with padding
@@ -7,21 +9,18 @@ key = b'\x00\x01\x02\x03\x04\x05\x06\x07\x08\t\n\x0b\x0c\r\x0e\x0f'
 
 o = oracle.CBCPaddingOracle(key)
 enc = o.encrypt(iv, m)
-padding_correct, dec = o.verify_padding(iv, enc)
+padding_correct = o.verify_padding(iv, enc)
 
 import cbc_padding_oracle_attack as attack
 a = attack.CBCPaddingOracleAttack()
 a.recover_message(o, iv, enc)
 
-# invalid padding:
-enc2 = b'P\xd3+r\xf3\xc1Po|C:\xc4\x80\xbd\xd7\xac'
-padding_correct2, dec2 = o.verify_padding(iv, enc2)
-
 # last block is full:
 m2 = b'\x06\x8b%\xc7\xbf\xb1\xf8\xbd\xd4\xcf\xc9\x08\xf6\x9d\xff\xc5\xdd\xc7&\xa1\x97\xf0\xe5\xf7 \xf7092y\xbe\x91'
 enc3 = o.encrypt(iv, m2)
-padding_correct3, dec3 = o.verify_padding(iv, enc3)
-
+padding_correct3 = o.verify_padding(iv, enc3)
 a.recover_message(o, iv, enc3)
 
-
+# invalid padding:
+enc2 = b'P\xd3+r\xf3\xc1Po|C:\xc4\x80\xbd\xd7\xac'
+padding_correct2 = o.verify_padding(iv, enc2)

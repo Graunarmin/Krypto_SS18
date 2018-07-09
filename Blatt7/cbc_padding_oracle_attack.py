@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Valerie Lemuth (117017) & Johanna Sacher (117353)
 
 """
 Implements the CBC padding oracle attack and returns (if possible)
@@ -22,7 +23,7 @@ class CBCPaddingOracleAttack:
 
     # ---------------------------------------------------------
 
-    def recover_message(self, 
+    def recover_message(self,
                         oracle: CBCPaddingOracle,
                         initial_value: bytes,
                         ciphertext: bytes):# -> bytes:
@@ -32,74 +33,60 @@ class CBCPaddingOracleAttack:
         :param ciphertext: Ciphertext. Length must be multiple of 16 bytes.
         :return: Returns the plaintext that corresponded to the given
                  ciphertext.
+        ANMERKUNGEN:
+        with great help from: https://robertheaton.com/2013/07/29/padding-oracle-attack/
+        Alle Fehler, die Pylint noch anmeckert, sind von Eik, nicht von mir!
+        c) funktioniert für die einkommentierten Tests in der Test-Datei.
+        Den Rest habe ich nicht hinbekommen, ein gepaddeter Block funktioniert, bei allem drüber
+        kommt man beim Hochzählen an die 255 Grenze und ich weiß nicht genau,
+        was ich da falsch mache -.- Habe mich an der Seite oben orientiert,
+        das war die beste Erklärung, die ich finden konnte.
         """
-        messed_msg = [0 for i in range(16)]
+
         interm_state = [0 for i in range(16)]
-        decrypted_msg = [0 for i in range(16)]
         i_v = list(initial_value) #creates a list of the integer-representations of the bytes
-        cipher = list(ciphertext)
-        rounds = 
+        whole_cipher = i_v + list(ciphertext)
+        dec_msg = []
 
-        for i in range(15, -1, -1):
-            sneaky = []
-            sneaky = i_v[:i]
+        for k in range(len(whole_cipher), 31, -16):
+            cipher = whole_cipher[(k-16):k]
+            sneaky = whole_cipher[(k-32):(k-16)]
+            dec_block = [0 for k in range(16)]
 
-            counter = (16 - i)
-            for j in range(-1, -counter-1, -1):
-                messed_msg[j] = counter
-
-            sneaky_value = 0
-            sneaky.append(sneaky_value)
-            for j in range((i+1), 16):
-                sneaky.append(messed_msg[j] ^ interm_state[j])
-            
-            #print("Sneaky: ", sneaky)
-            padding_correct, dec = oracle.verify_padding(bytes(sneaky), ciphertext)
-                
-            while not padding_correct:
-                sneaky_value += 1
-                if sneaky_value > 255:
-                    break
+            for i in range(15, -1, -1):
+                counter = (16 - i)
+                sneaky_value = 0
                 sneaky[i] = sneaky_value
-                padding_correct, dec = oracle.verify_padding(bytes(sneaky), ciphertext)
-                #print("Sneaky: ", sneaky)
-            
+                for j in range((i+1), 16):
+                    sneaky[j] = counter ^ interm_state[j]
 
-            if padding_correct:
-                # Wenn Padding stimmt, dann weiß man, was in der gefälschten Nachricht an der Stelle stand 
-                # (wg. Padding)und man kann berechnen, was im vorherigen Cipherblock an der Stelle steht
+                padding_correct = oracle.verify_padding(bytes(sneaky), bytes(cipher))
 
-                for j in range(i, 16):
-                    messed_msg[j] = (16 - i)
-                    counter = (16 - i)
-                
-                interm_state[i] = sneaky[i] ^ messed_msg[i]
-                decrypted_msg[i] = i_v[i] ^ interm_state[i]
-            
-            elif sneaky_value > 255:
-                print("Something went terribly wrong")
-                break
+                while not padding_correct:
+                    sneaky_value += 1
+                    if sneaky_value > 255:
+                        break
+                    sneaky[i] = sneaky_value
+                    padding_correct = oracle.verify_padding(bytes(sneaky), bytes(cipher))
 
-        dec_msg = decrypted_msg
-        
-        # # catch empty message:
-        # print(dec_msg)
-        # if dec_msg.count(0) == len(dec_msg):
-        #     dec_msg = []
+                if padding_correct:
+                    # Wenn Padding stimmt, dann weiß man, was in der gefälschten Nachricht
+                    # an der Stelle stand (wg. Padding)und man kann berechnen,
+                    # was im vorherigen Cipherblock an der Stelle steht
+                    interm_state[i] = sneaky[i] ^ counter
+                    dec_block[i] = i_v[i] ^ interm_state[i]
 
-        # Padding entfernen:
-        for i in range(1, 17):
-            if (decrypted_msg[-1] == i)and(decrypted_msg[-i] == i):
-                dec_msg = decrypted_msg[:-i]
-            else:
-                pass
+                elif sneaky_value > 255:
+                    print("Something went terribly wrong")
+                    break
+
+                else:
+                    pass
+
+            # Padding entfernen:
+            padding = dec_block[-1]
+            dec_block = dec_block[:-padding]
+
+            dec_msg = dec_block + dec_msg
 
         return bytes(dec_msg)
-
-
-
-        
-            
-
-        
-        

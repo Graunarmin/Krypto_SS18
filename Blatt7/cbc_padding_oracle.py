@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Valerie Lemuth (117017) & Johanna Sacher (117353)
 
 """
 Implements a CBC padding oracle for AES-128-CBC.
@@ -10,7 +11,7 @@ __copyright__ = Creative Commons CC0
 # ---------------------------------------------------------
 
 from Crypto.Cipher import AES
-from Crypto.Util.py3compat import bchr
+#from Crypto.Util.py3compat import bchr
 
 # ---------------------------------------------------------
 
@@ -64,12 +65,12 @@ class CBCPaddingOracle:
         :param initial_value: 16-byte initial value.
         :param ciphertext: Ciphertext. Length must be multiple of 16 bytes.
         :return: True if padding is correct or there was no padding, and False otherwise
-        AND the decrypted message (for now)
         """
 
         dec_msg = self.aes_dec(initial_value, ciphertext)
-        block_length = len(initial_value)
-        pad_val = dec_msg[-1]
+        dec_list = list(dec_msg)
+        block_length = 16
+        pad_val = dec_list[-1]
         padding_correct = True
 
         if pad_val > block_length:
@@ -77,21 +78,20 @@ class CBCPaddingOracle:
 
         elif pad_val == block_length:
             #hier müsste 16 x 16 stehen
-            for i in range(0, block_length):
-                if dec_msg[i] != pad_val:
+            for i in range(1, 17):
+                if dec_list[-i] != pad_val:
                     padding_correct = False
                     break
 
         elif pad_val < block_length:
             for i in range(1, pad_val+1):
-                if dec_msg[-i] != pad_val:
+                if dec_list[-i] != pad_val:
                     padding_correct = False
                     break
         else:
             pass
-                
-        return padding_correct, dec_msg
 
+        return padding_correct
 
     def aes_dec(self, initial_value: bytes, ciphertext: bytes): #->bytes
         '''
@@ -114,20 +114,13 @@ def pad(message: bytes, block_length: int): #-> bytes
 
     if not too_short:
         # Wenn der letzte Block "voll" ist: noch einen Block anhängen (16 x die 16)
-        i = 0
-        while i < 16:
-            padding = bchr(16)
-            message += padding
-            i += 1
+        padding = bytes([16 for i in range(0, 16)])
+        message += padding
 
     else:
         # wenn dem letzten Block Bytes fehlen: die entsprechende Anzahl hinzufügen
         to_add = (block_length - len(message)) % block_length
-
-        while too_short:
-            padding = bchr(to_add)
-            message += padding
-            if (len(message) % block_length) == 0:
-                too_short = False
+        padding = bytes([to_add for i in range(0, to_add)])
+        message += padding
 
     return message

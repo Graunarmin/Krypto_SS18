@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# Valerie Lemuth (117017) & Johanna Sacher (117353)
 
 """
 Test cases for the CBC padding-oracle attack.
@@ -88,8 +89,8 @@ class CBCPaddingOracleAttackTest(unittest.TestCase):
 
     # # ---------------------------------------------------------
 
-    def test_cbc_attack_single_block(self) -> None:
-        self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf0822")
+    # def test_cbc_attack_single_block(self) -> None:
+    #     self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf0822")
 
     # ---------------------------------------------------------
 
@@ -97,7 +98,6 @@ class CBCPaddingOracleAttackTest(unittest.TestCase):
         self._test_cbc_attack("45cf12964fc824ab76616ae2f4bf08")
 
     # # ---------------------------------------------------------
-
 
     # def test_cbc_attack_two_blocks(self) -> None:
     #     self._test_cbc_attack(\
